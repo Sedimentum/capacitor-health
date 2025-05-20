@@ -266,12 +266,16 @@ public class HealthPlugin: CAPPlugin, CAPBridgedPlugin {
     
     func calculateInterval(bucket: String) -> DateComponents? {
         switch bucket {
+        case "minute":
+            return DateComponents(minute: 1)
         case "hour":
             return DateComponents(hour: 1)
         case "day":
             return DateComponents(day: 1)
         case "week":
             return DateComponents(weekOfYear: 1)
+        case "year":
+            return DateComponents(year: 1)
         default:
             return nil
         }

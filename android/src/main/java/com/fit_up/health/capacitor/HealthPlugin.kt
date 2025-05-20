@@ -10,6 +10,7 @@ import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.aggregate.AggregateMetric
 import androidx.health.connect.client.aggregate.AggregationResult
+import androidx.health.connect.client.aggregate.AggregationResultGroupedByDuration
 import androidx.health.connect.client.aggregate.AggregationResultGroupedByPeriod
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.DistanceRecord
@@ -18,6 +19,7 @@ import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
+import androidx.health.connect.client.request.AggregateGroupByDurationRequest
 import androidx.health.connect.client.request.AggregateGroupByPeriodRequest
 import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
@@ -32,6 +34,7 @@ import com.getcapacitor.annotation.Permission
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.Period
@@ -279,14 +282,22 @@ class HealthPlugin : Plugin() {
 
             val period = when (bucket) {
                 "day" -> Period.ofDays(1)
+                "week" -> Period.ofWeeks(1)
+                "year" -> Period.ofYears(1)
+                else -> null;
+            }
+            val duration = when (bucket) {
+                "hour" -> Duration.ofHours(1)
+                "minute" -> Duration.ofMinutes(1)
                 else -> throw RuntimeException("Unsupported bucket: $bucket")
             }
 
-
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-
-                    val r = queryAggregatedMetric(metricAndMapper, TimeRangeFilter.between(startDateTime, endDateTime), period)
+                    val r = (
+                      if (period != null) queryAggregatedMetricWithPeriod(metricAndMapper, TimeRangeFilter.between(startDateTime, endDateTime), period)
+                      else queryAggregatedMetricWithDuration(metricAndMapper, TimeRangeFilter.between(startDateTime, endDateTime), duration)
+                    )
 
                     val aggregatedList = JSArray()
                     r.forEach { aggregatedList.put(it.toJs()) }
@@ -339,7 +350,7 @@ class HealthPlugin : Plugin() {
         }
     }
 
-    private suspend fun queryAggregatedMetric(
+    private suspend fun queryAggregatedMetricWithPeriod(
         metricAndMapper: MetricAndMapper, timeRange: TimeRangeFilter, period: Period,
     ): List<AggregatedSample> {
         if (!hasPermission(metricAndMapper.permission)) {
@@ -358,7 +369,31 @@ class HealthPlugin : Plugin() {
             val mappedValue = metricAndMapper.getValue(it.result)
             AggregatedSample(it.startTime, it.endTime, mappedValue)
         }
+    }
 
+    private suspend fun queryAggregatedMetricWithDuration(
+        metricAndMapper: MetricAndMapper, timeRange: TimeRangeFilter, duration: Duration,
+    ): List<AggregatedSample> {
+        if (!hasPermission(metricAndMapper.permission)) {
+            return emptyList()
+        }
+
+        val response: List<AggregationResultGroupedByDuration> = healthConnectClient.aggregateGroupByDuration(
+            AggregateGroupByDurationRequest(
+                metrics = setOf(metricAndMapper.metric),
+                timeRangeFilter = timeRange,
+                timeRangeSlicer = duration
+            )
+        )
+
+        return response.map {
+            val mappedValue = metricAndMapper.getValue(it.result)
+            AggregatedSample(
+              LocalDateTime.ofInstant(it.startTime, ZoneId.systemDefault()),
+              LocalDateTime.ofInstant(it.endTime, ZoneId.systemDefault()),
+              mappedValue
+            )
+        }
     }
 
     private suspend fun hasPermission(p: CapHealthPermission): Boolean {

@@ -1,0 +1,530 @@
+{
+  "api": {
+    "name": "HealthPlugin",
+    "slug": "healthplugin",
+    "docs": "",
+    "tags": [],
+    "methods": [
+      {
+        "name": "isHealthAvailable",
+        "signature": "() => Promise<{ available: boolean; }>",
+        "parameters": [],
+        "returns": "Promise<{ available: boolean; }>",
+        "tags": [],
+        "docs": "Checks if health API is available.\nAndroid: If false is returned, the Google Health Connect app is probably not installed.\nSee showHealthConnectInPlayStore()",
+        "complexTypes": [],
+        "slug": "ishealthavailable"
+      },
+      {
+        "name": "checkHealthPermissions",
+        "signature": "(permissions: PermissionsRequest) => Promise<PermissionResponse>",
+        "parameters": [
+          {
+            "name": "permissions",
+            "docs": "permissions to query",
+            "type": "PermissionsRequest"
+          }
+        ],
+        "returns": "Promise<PermissionResponse>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "permissions permissions to query"
+          }
+        ],
+        "docs": "Android only: Returns for each given permission, if it was granted by the underlying health API",
+        "complexTypes": [
+          "PermissionResponse",
+          "PermissionsRequest"
+        ],
+        "slug": "checkhealthpermissions"
+      },
+      {
+        "name": "requestHealthPermissions",
+        "signature": "(permissions: PermissionsRequest) => Promise<PermissionResponse>",
+        "parameters": [
+          {
+            "name": "permissions",
+            "docs": "permissions to request",
+            "type": "PermissionsRequest"
+          }
+        ],
+        "returns": "Promise<PermissionResponse>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "permissions permissions to request"
+          }
+        ],
+        "docs": "Requests the permissions from the user.\n\nAndroid: Apps can ask only a few times for permissions, after that the user has to grant them manually in\nthe Health Connect app. See openHealthConnectSettings()\n\niOS: If the permissions are already granted or denied, this method will just return without asking the user. In iOS\nwe can't really detect if a user granted or denied a permission. The return value reflects the assumption that all\npermissions were granted.",
+        "complexTypes": [
+          "PermissionResponse",
+          "PermissionsRequest"
+        ],
+        "slug": "requesthealthpermissions"
+      },
+      {
+        "name": "openAppleHealthSettings",
+        "signature": "() => Promise<void>",
+        "parameters": [],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "Opens the apps settings, which is kind of wrong, because health permissions are configured under:\nSettings > Apps > (Apple) Health > Access and Devices > [app-name]\nBut we can't go there directly.",
+        "complexTypes": [],
+        "slug": "openapplehealthsettings"
+      },
+      {
+        "name": "openHealthConnectSettings",
+        "signature": "() => Promise<void>",
+        "parameters": [],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "Opens the Google Health Connect app",
+        "complexTypes": [],
+        "slug": "openhealthconnectsettings"
+      },
+      {
+        "name": "showHealthConnectInPlayStore",
+        "signature": "() => Promise<void>",
+        "parameters": [],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "Opens the Google Health Connect app in PlayStore",
+        "complexTypes": [],
+        "slug": "showhealthconnectinplaystore"
+      },
+      {
+        "name": "queryAggregated",
+        "signature": "(request: QueryAggregatedRequest) => Promise<QueryAggregatedResponse>",
+        "parameters": [
+          {
+            "name": "request",
+            "docs": "",
+            "type": "QueryAggregatedRequest"
+          }
+        ],
+        "returns": "Promise<QueryAggregatedResponse>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "request"
+          }
+        ],
+        "docs": "Query aggregated data",
+        "complexTypes": [
+          "QueryAggregatedResponse",
+          "QueryAggregatedRequest"
+        ],
+        "slug": "queryaggregated"
+      },
+      {
+        "name": "queryWorkouts",
+        "signature": "(request: QueryWorkoutRequest) => Promise<QueryWorkoutResponse>",
+        "parameters": [
+          {
+            "name": "request",
+            "docs": "",
+            "type": "QueryWorkoutRequest"
+          }
+        ],
+        "returns": "Promise<QueryWorkoutResponse>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "request"
+          }
+        ],
+        "docs": "Query workouts",
+        "complexTypes": [
+          "QueryWorkoutResponse",
+          "QueryWorkoutRequest"
+        ],
+        "slug": "queryworkouts"
+      }
+    ],
+    "properties": []
+  },
+  "interfaces": [
+    {
+      "name": "PermissionResponse",
+      "slug": "permissionresponse",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "permissions",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "{ [key: string]: boolean; }[]"
+        }
+      ]
+    },
+    {
+      "name": "PermissionsRequest",
+      "slug": "permissionsrequest",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "permissions",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "HealthPermission"
+          ],
+          "type": "HealthPermission[]"
+        }
+      ]
+    },
+    {
+      "name": "QueryAggregatedResponse",
+      "slug": "queryaggregatedresponse",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "aggregatedData",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "AggregatedSample"
+          ],
+          "type": "AggregatedSample[]"
+        }
+      ]
+    },
+    {
+      "name": "AggregatedSample",
+      "slug": "aggregatedsample",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "startDate",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "endDate",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number"
+        }
+      ]
+    },
+    {
+      "name": "QueryAggregatedRequest",
+      "slug": "queryaggregatedrequest",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "startDate",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "endDate",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "dataType",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "'steps' | 'active-calories' | 'mindfulness'"
+        },
+        {
+          "name": "bucket",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "'minute' | 'hour' | 'day' | 'week' | 'year'"
+        }
+      ]
+    },
+    {
+      "name": "QueryWorkoutResponse",
+      "slug": "queryworkoutresponse",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "workouts",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "Workout"
+          ],
+          "type": "Workout[]"
+        }
+      ]
+    },
+    {
+      "name": "Workout",
+      "slug": "workout",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "startDate",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "endDate",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "workoutType",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "sourceName",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "duration",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number"
+        },
+        {
+          "name": "distance",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "steps",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "calories",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number"
+        },
+        {
+          "name": "sourceBundleId",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "route",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "RouteSample"
+          ],
+          "type": "RouteSample[] | undefined"
+        },
+        {
+          "name": "heartRate",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "HeartRateSample"
+          ],
+          "type": "HeartRateSample[] | undefined"
+        }
+      ]
+    },
+    {
+      "name": "RouteSample",
+      "slug": "routesample",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "timestamp",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "lat",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number"
+        },
+        {
+          "name": "lng",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number"
+        },
+        {
+          "name": "alt",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number | undefined"
+        }
+      ]
+    },
+    {
+      "name": "HeartRateSample",
+      "slug": "heartratesample",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "timestamp",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "bpm",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number"
+        }
+      ]
+    },
+    {
+      "name": "QueryWorkoutRequest",
+      "slug": "queryworkoutrequest",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "startDate",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "endDate",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "includeHeartRate",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean"
+        },
+        {
+          "name": "includeRoute",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean"
+        },
+        {
+          "name": "includeSteps",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "boolean"
+        }
+      ]
+    }
+  ],
+  "enums": [],
+  "typeAliases": [
+    {
+      "name": "HealthPermission",
+      "slug": "healthpermission",
+      "docs": "",
+      "types": [
+        {
+          "text": "'READ_STEPS'",
+          "complexTypes": []
+        },
+        {
+          "text": "'READ_WORKOUTS'",
+          "complexTypes": []
+        },
+        {
+          "text": "'READ_ACTIVE_CALORIES'",
+          "complexTypes": []
+        },
+        {
+          "text": "'READ_TOTAL_CALORIES'",
+          "complexTypes": []
+        },
+        {
+          "text": "'READ_DISTANCE'",
+          "complexTypes": []
+        },
+        {
+          "text": "'READ_HEART_RATE'",
+          "complexTypes": []
+        },
+        {
+          "text": "'READ_ROUTE'",
+          "complexTypes": []
+        },
+        {
+          "text": "'READ_MINDFULNESS'",
+          "complexTypes": []
+        }
+      ]
+    }
+  ],
+  "pluginConfigs": []
+}

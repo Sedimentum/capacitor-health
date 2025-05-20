@@ -118,7 +118,7 @@ export interface QueryAggregatedRequest {
   startDate: string;
   endDate: string;
   dataType: 'steps' | 'active-calories' | 'mindfulness';
-  bucket: string;
+  bucket: 'minute' | 'hour' | 'day' | 'week' | 'year';
 }
 
 export interface QueryAggregatedResponse {
